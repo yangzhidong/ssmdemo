@@ -1,0 +1,13 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yes.dl.shop.db.mapper.IndexMapper">
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"></cache>
+
+    <!--List<FirstModule> findFirstAndSecondModule();-->
+    <select id="findFirstAndSecondModule" resultType="map">
+          SELECT
+          sf.ID id,sf.INTRO intro,sf.URL url,sf.LEVEL f_level,ss.ID s_id,ss.INTRO s_intro,ss.URL s_url,ss.LEVEL s_level,ss.PCODE s_pcode
+          FROM `sys_module` sf JOIN `sys_module` ss ON ss.PCODE = sf.ID
+          WHERE sf.TITLE = '一级菜单' AND sf.FLAG = 1 AND ss.FLAG = 1;
+    </select>
+</mapper>

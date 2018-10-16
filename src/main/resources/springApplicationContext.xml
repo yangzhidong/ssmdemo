@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://mybatis.org/schema/mybatis-spring
+         http://mybatis.org/schema/mybatis-spring.xsd">
+
+    <context:component-scan base-package="com.yes.dl">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <bean id="propertyPlaceHolderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:db.properties</value>
+                <value>classpath:druid.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${database.className}" />
+        <property name="url" value="${database.url}" />
+        <property name="username" value="${database.username}" />
+        <property name="password" value="${database.password}" />
+
+        <property name="maxActive" value="${druid.maxActive}" />
+        <property name="initialSize" value="${druid.initialSize}" />
+        <property name="maxWait" value="${druid.maxWait}" />
+        <property name="minIdle" value="${druid.minIdle}" />
+
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" /> <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <!-- 建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+        <property name="maxOpenPreparedStatements" value="${druid.maxOpenPreparedStatements}" /><!-- 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。 -->
+        <!-- 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启。 -->
+        <property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+        <!-- 指定每个PSCache连接上PSCache的大小 -->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}" />
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="mapperLocations" value="classpath:com/yes/dl/shop/db/mapping/**/*.xml" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="typeAliasesPackage" value="com.yes.dl.shop.db.domain" />
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <value>
+                            helperDialect=mysql
+                            reasonable=true
+                            supportMethodsArguments=true
+                            params=count=countSql
+                            autoRuntimeDialect=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+    <mybatis:scan base-package="com.yes.dl.shop.db.mapper"/>
+
+    <!-- 开启事务注解驱动 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class" />
+            <tx:method name="insert*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class"  />
+            <tx:method name="add*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class"  />
+            <tx:method name="create*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class" />
+            <tx:method name="delete*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class"  />
+            <tx:method name="remove*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class" />
+            <tx:method name="update*" propagation="REQUIRED" read-only="false" isolation="REPEATABLE_READ" rollback-for="Exception.Class"  />
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" isolation="READ_COMMITTED" />
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true" isolation="READ_COMMITTED"  />
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" isolation="READ_COMMITTED"  />
+            <tx:method name="*" propagation="REQUIRED" read-only="true" rollback-for="Exception.class" />
+        </tx:attributes>
+    </tx:advice>	<!-- 切面 -->
+    <!--类名必须包含Service-->
+    <aop:config>
+        <aop:pointcut id="txPointcut" expression="execution(* com.yes.dl.shop.service..*Service*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+    </aop:config>
+
+</beans>

@@ -1,0 +1,56 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yes.dl.shop.db.mapper.TestMapper">
+
+    <!--int save(Person person);-->
+    <insert id="save" parameterType="person">
+        insert into person (p_name) values (#{userName})
+    </insert>
+    <!--long insertPerson(Person person);-->
+    <insert id="insertPerson" parameterType="person">
+        insert into person (p_name) values (#{userName})
+    </insert>
+    <!--boolean addPerson(Person person);-->
+    <insert id="addPerson" parameterType="person">
+        insert into person (p_name) values (#{userName})
+    </insert>
+    <!--void createPerson(Person person);-->
+    <insert id="createPerson" parameterType="person">
+        insert into person (p_name) values (#{userName})
+    </insert>
+
+    <!--void deletePerson(int id);-->
+    <delete id="deletePerson" parameterType="_int">
+        delete from person where id = #{id}
+    </delete>
+
+    <!--void removePerson(int id);-->
+    <delete id="removePerson" parameterType="_int">
+        delete from person where id = #{id}
+    </delete>
+
+    <!--void updatePerson(Person person);-->
+    <update id="updatePerson" parameterType="person">
+        update person set p_name = #{userName} where id = #{id}
+    </update>
+
+    <!--Person getPerson(int id);-->
+    <select id="getPerson" parameterType="_int" resultType="person">
+        select id,p_name userName from person where id = #{id}
+    </select>
+
+    <resultMap id="testPerson" type="person">
+        <id property="id" column="id" />
+        <result property="userName" column="p_name" />
+    </resultMap>
+
+    <!--List<Person> findPerson();-->
+    <select id="findPerson" resultMap="testPerson">
+        select * from person
+    </select>
+
+    <!--List<Map<String, Object>> queryPersons();-->
+    <select id="queryPersons" resultType="map">
+        select * from person
+    </select>
+</mapper>

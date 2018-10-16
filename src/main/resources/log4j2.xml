@@ -1,0 +1,37 @@
+<?xml  version="1.0"  encoding="UTF-8"?>
+<Configuration  status="WARN" monitorInterval="300">
+    <!--可以配置多个输出的目的地-->
+    <Appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n" />
+        </console>
+
+        <RollingFile name="RollingFileInfo" fileName="${sys:catalina.home}/logs/ssm.log"
+                      filePattern="${sys:catalina.home}/logs/ssm-$${date:yyyy-MM}/ssm-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="INFO" />
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL" />
+            </Filters>
+            <PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%p] - %l - %m%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="100MB" />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="RollingFileInfo" />
+            <AppenderRef ref="Console" />
+        </logger>
+        <!-- additivity="false"-->
+        <Logger name="com.yes.dl.shop.db.mapper" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFileInfo" />
+        </Logger>
+        <root level="all" additivity="false">
+            <appender-ref ref="Console" />
+            <appender-ref ref="RollingFileInfo" />
+        </root>
+    </Loggers>
+</Configuration>

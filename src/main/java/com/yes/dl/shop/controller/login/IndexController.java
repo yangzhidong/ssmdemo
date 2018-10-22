@@ -17,6 +17,7 @@ public class IndexController {
 
     @RequestMapping(value = {"/index.html", "/"})
     public ModelAndView jumpIndex(ModelAndView modelAndView){
+        
         List<FirstModule> firstAndSecondModule = indexService.findFirstAndSecondModule();
 
         modelAndView.setViewName("forward:/index.jsp");

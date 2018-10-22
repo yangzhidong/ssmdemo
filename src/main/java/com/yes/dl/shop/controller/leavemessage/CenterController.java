@@ -6,7 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class CenterController {
-
+//点击个人中心，跳转
     @RequestMapping("/vip.html")
     public ModelAndView jumpVip(ModelAndView modelAndView){
         modelAndView.setViewName("vip");

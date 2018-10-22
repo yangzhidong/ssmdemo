@@ -24,6 +24,7 @@
                 }
             });
             ${sessionScope.get("message")}
+            ${requestScope.get("messageinfo")}
         })
 
 

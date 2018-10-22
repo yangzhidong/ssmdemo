@@ -1,4 +1,4 @@
-package com.yes.dl.shop.controller.liuyan;
+package com.yes.dl.shop.controller.leavemessage;
 
 import com.yes.dl.shop.db.domain.Message;
 import com.yes.dl.shop.service.TestService;
@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class liuyanController {
+public class LeaveMessageController {
+
     @Autowired
     private TestService testService;
+
     @RequestMapping("/message.html")
     public ModelAndView jumpMessage(ModelAndView modelAndView){
         modelAndView.setViewName("message");

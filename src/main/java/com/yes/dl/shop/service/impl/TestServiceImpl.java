@@ -1,10 +1,9 @@
 package com.yes.dl.shop.service.impl;
 
 import com.yes.dl.shop.db.domain.Person;
+import com.yes.dl.shop.db.domain.Message;
 import com.yes.dl.shop.db.mapper.TestMapper;
 import com.yes.dl.shop.service.TestService;
-import org.apache.ibatis.cache.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -86,4 +85,11 @@ public class TestServiceImpl implements TestService {
         int a = 10/0;
         testMapper.insertPerson(person);
     }
+    @Override
+    public boolean insertMessage(Message message) {
+        return testMapper.insertMessage(message);
+    }
+
+
+
 }

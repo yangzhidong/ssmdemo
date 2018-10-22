@@ -53,4 +53,7 @@
     <select id="queryPersons" resultType="map">
         select * from person
     </select>
+    <insert id="insertMessage" parameterType="message">
+        insert into message (username,touch,content) values (#{userName},#{touch},#{content});
+    </insert>
 </mapper>

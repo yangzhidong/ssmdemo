@@ -1,6 +1,7 @@
 package com.yes.dl.shop.db.mapper;
 
 import com.yes.dl.shop.db.domain.Person;
+import com.yes.dl.shop.db.domain.Message;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +22,5 @@ public interface TestMapper {
     List<Person> findPerson();
 
     List<Map<String, Object>> queryPersons();
+    boolean insertMessage(Message message);
 }
